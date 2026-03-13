@@ -1,0 +1,128 @@
+/* ============================================================
+SETLIST OVERLAYS
+============================================================ */
+.overlay,
+#loadsetlist-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(5, 6, 11, 0.85); /* dark semi-transparent backdrop */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999; /* always above page content */
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.25s ease, visibility 0s 0.25s;
+}
+
+.overlay.show,
+#loadsetlist-overlay.show {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.25s ease;
+}
+
+/* Common card/box styling */
+.overlay-box,
+.overlay-card {
+  position: relative;
+  background: radial-gradient(circle at top left,
+              rgba(18,92,34,0.22),
+              rgba(9,11,43,0.78) 55%,
+              #05060b 100%);
+  border-radius: 14px;
+  box-shadow: 0 0 0 1px rgba(116,131,255,0.26),
+              0 20px 44px rgba(0,0,0,0.82);
+  padding: 24px;
+  width: 340px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  color: #f5f7ff;
+  text-align: center;
+}
+
+/* Title pill */
+.overlay-box h3,
+.overlay-card h3 {
+  display: inline-block;
+  padding: 6px 12px;
+  margin: 0 0 16px 0;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+  background-color: #1a1a1a;
+  border-radius: 6px;
+}
+
+/* Dropdown / textbox */
+.overlay-box select,
+.overlay-box input,
+.overlay-card select,
+.overlay-card input {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(150,170,255,0.35);
+  background: rgba(20,22,40,0.85);
+  color: #e4e8ff;
+  font-size: 13px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+/* Buttons row */
+.overlay-box .row,
+.overlay-card .row {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+/* Buttons */
+.overlay-box button,
+.overlay-card button {
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f5f7ff;
+  background: rgba(120, 140, 255, 0.18);
+  border: 1px solid rgba(150, 170, 255, 0.35);
+  border-radius: 6px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.overlay-box button:hover,
+.overlay-card button:hover {
+  background: rgba(120, 140, 255, 0.3);
+  box-shadow: 0 0 8px rgba(150, 170, 255, 0.5);
+}
+
+.overlay,
+#loadsetlist-overlay,
+#delete-setlist-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(5, 6, 11, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.25s ease, visibility 0s 0.25s;
+}
+
+.overlay.show,
+#loadsetlist-overlay.show,
+#delete-setlist-overlay.show {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 0.25s ease;}

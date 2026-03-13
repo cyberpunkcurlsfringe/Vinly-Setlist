@@ -1,0 +1,28 @@
+/* Page background container */
+.page-shell {
+  position: relative;
+  min-height: 100vh;     
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: opacity 1.5s ease;
+}
+
+/* Lyrics overlay drawer */
+.lyrics-overlay {
+  position: fixed;
+  top: 0;
+  right: -325px;     
+  width: 325px; 
+  height: 100%;
+  border-left: 1px solid rgba(140,150,255,0.25);
+  box-shadow: -6px 0 20px rgba(0,0,0,0.6);
+  padding: 20px;
+  overflow-y: auto;
+  z-index: 1102;
+  transition: right 0.3s ease;
+  background: radial-gradient(circle at top left,
+              rgba(68,92,164,0.22),
+              rgba(9,11,23,0.78) 55%,
+              #05060b 100%);
+}

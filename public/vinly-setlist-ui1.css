@@ -1,0 +1,93 @@
+/* ============================================================
+SETLIST OVERLAY (centered modal style)
+============================================================ */
+#setlist-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(10, 12, 28, 0.85); /* dark translucent backdrop */
+  z-index: 10000;
+
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+}
+
+#setlist-overlay.show {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.25s ease, visibility 0s;
+}
+
+#setlist-overlay .overlay-card {
+  background: radial-gradient(circle at top left,
+              rgba(18,92,34,0.22),
+              rgba(9,11,43,0.88) 55%,
+              #05060b 100%);
+  border: 1px solid rgba(140,150,255,0.4);
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.7);
+  padding: 24px;
+  max-width: 420px;
+  width: 90%;
+  color: #f5f7ff;
+  text-align: center;
+
+  transform: scale(0.95);
+  transition: transform 0.25s ease;
+}
+
+#setlist-overlay.show .overlay-card {
+  transform: scale(1);
+}
+
+#setlist-overlay h3 {
+  margin-top: 0;
+  margin-bottom: 18px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: #ffffff;
+  background-color: #1a1a1a;
+  border-radius: 6px;
+  display: inline-block;
+  padding: 6px 12px;
+}
+
+#setlist-overlay input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 18px;
+  border-radius: 6px;
+  border: 1px solid rgba(150,170,255,0.35);
+  background: rgba(20,22,40,0.9);
+  color: #f5f7ff;
+}
+
+#setlist-overlay .row {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+#setlist-overlay button {
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #f5f7ff;
+  background: rgba(120,140,255,0.18);
+  border: 1px solid rgba(150,170,255,0.35);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+#setlist-overlay button:hover {
+  background: rgba(120,140,255,0.3);
+  box-shadow: 0 0 8px rgba(150,170,255,0.5);
+}

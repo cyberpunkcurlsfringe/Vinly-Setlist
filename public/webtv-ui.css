@@ -1,0 +1,597 @@
+/* ============================================================
+PLAYER INLINE CONTAINER (original footer audio player)
+============================================================ */
+#audio-footer.player-shell-inline {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: radial-gradient(circle at top, rgba(123,97,255,0.28), rgba(6,8,18,1) 58%, #020308 100%);
+  box-shadow: 0 -2px 20px rgba(0,0,0,0.6);
+  transition: transform 280ms ease, opacity 220ms ease;
+}
+
+#audio-footer.collapsed {
+  opacity: 0;
+  transform: translateY(100%);
+  visibility: hidden;
+  pointer-events: none;
+}
+#audio-footer.open {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Shared player styles */
+.player-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+.player-label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-right: 12px;
+  color: #dfe3ff;
+}
+.player-track-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: #fff;
+}
+.control-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.play-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(123,97,255,0.15);
+  border: 1px solid rgba(123,97,255,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.play-btn:hover {
+  background: rgba(123,97,255,0.25);
+  box-shadow: 0 0 12px rgba(123,97,255,0.5);
+}
+.play-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: #7b61ff;
+}
+.time-display {
+  font-size: 12px;
+  color: #dfe3ff;
+}
+.progress-container {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+}
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #7b61ff, #bbaaff);
+  border-radius: 3px;
+  transition: width 0.2s linear;
+}
+.player-right {
+  min-width: 120px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* ============================================================
+WEBTV
+============================================================ */
+/* Floating frame container */
+#webtv-frame {
+  position: fixed;
+  top: 100px;
+  left: 50px;              /* use left instead of right for drag logic */
+  width: 480px;
+  height: 270px;
+  background: #000;
+  border: 2px solid #22e1ff;
+  box-shadow: 0 0 15px #22e1ff;
+  display: none;
+  flex-direction: column;
+  z-index: 2000;
+  overflow: hidden;
+  border-radius: 8px;
+  resize: both;
+  min-width: 240px;
+  min-height: 135px;
+  will-change: left, top;  /* smoother drag updates */
+  transform: none !important; /* avoid transform interfering with drag */
+}
+
+/* Fullscreen state */
+#webtv-frame.fullscreen,
+#webtv-frame:fullscreen,
+#webtv-frame:-webkit-full-screen {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: black !important;
+}
+
+/* Header */
+#webtv-frame-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  background: rgba(34,225,255,0.1);
+  cursor: move;
+  user-select: none;
+  touch-action: none;   /* allow pointer drag */
+}
+#webtv-frame-header .webtv-frame-title {
+  font-size: 14px;
+  color: #22e1ff;
+}
+#webtv-frame-header .webtv-frame-controls button {
+  background: rgba(34,225,255,0.15);
+  border: 1px solid rgba(34,225,255,0.4);
+  border-radius: 4px;
+  color: #22e1ff;
+  font-size: 12px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+#webtv-frame-header .webtv-frame-controls button:hover {
+  background: rgba(34,225,255,0.25);
+  box-shadow: 0 0 8px rgba(34,225,255,0.5);
+}
+
+/* Stage area */
+#webtv-stage {
+  position: relative;
+  width: 100%;
+  height: calc(100% - 32px); /* subtract header height */
+  background: #000;
+}
+
+/* Video element fills stage */
+#webtv-video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  background: #000;
+}
+
+/* Overlay header/footer in fullscreen */
+#webtv-frame.fullscreen #webtv-footer.fs-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  z-index: 100;
+  background: rgba(0,0,0,0.4);
+  transition: opacity 0.25s ease;
+}
+#webtv-frame.fullscreen #webtv-footer.fs-overlay.hidden {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+#webtv-frame.fullscreen #webtv-header.fs-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  z-index: 100;
+}
+
+/* Stage fills frame in fullscreen */
+#webtv-frame:fullscreen #webtv-stage,
+#webtv-frame:-webkit-full-screen #webtv-stage {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+#webtv-frame:fullscreen #webtv-video,
+#webtv-frame:-webkit-full-screen #webtv-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Footer controls */
+#webtv-footer .control-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+/* Subtitle controls row inside footer */
+#webtv-footer .subtitle-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: 20px;
+}
+#webtv-footer .subtitle-controls label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #22e1ff;
+  letter-spacing: 0.5px;
+}
+
+/* Footer layout */
+#audio-footer .player-left,
+#webtv-footer .player-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+#audio-footer .player-track-title,
+#webtv-footer .player-track-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+#webtv-footer .player-track-title {
+  color: #22e1ff;
+}
+#audio-footer .player-track-title {
+  color: #22e1ff;
+}
+#audio-footer .control-bar,
+#webtv-footer .control-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+/* Footer states */
+#webtv-footer.player-shell-inline {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1200;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: radial-gradient(circle at top, rgba(34,225,255,0.25), rgba(6,8,18,1) 58%, #020308 100%);
+  box-shadow: 0 -2px 20px rgba(34,225,255,0.4);
+  transition: transform 280ms ease, opacity 220ms ease;
+}
+#webtv-footer.collapsed {
+  opacity: 0;
+  transform: translateY(100%);
+  visibility: hidden;
+  pointer-events: none;
+}
+#webtv-footer.open {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Footer controls */
+#webtv-play-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(34,225,255,0.15);
+  border: 1px solid rgba(34,225,255,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+#webtv-play-btn:hover {
+  background: rgba(34,225,255,0.25);
+  box-shadow: 0 0 12px rgba(34,225,255,0.5);
+}
+#webtv-play-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: #22e1ff;
+}
+
+#webtv-time-current,
+#webtv-time-total {
+  font-size: 12px;
+  color: #22e1ff;
+  min-width: 40px;
+  text-align: center;
+}
+
+#webtv-progress-container {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+}
+
+#webtv-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #22e1ff, #00ffff);
+  border-radius: 3px;
+  transition: width 0.2s linear;
+}
+
+#webtv-footer .player-right {
+  min-width: 120px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* Header hidden in fullscreen */
+#webtv-frame:fullscreen #webtv-frame-header,
+#webtv-frame.fullscreen #webtv-frame-header {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+/* Visible when toggled */
+#webtv-frame:fullscreen #webtv-frame-header.fs-visible,
+#webtv-frame.fullscreen #webtv-frame-header.fs-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+
+/* ============================================================
+LYRICS OVERLAY
+============================================================ */
+/* Base overlay container */
+.lyrics-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;          /* anchor to right side */
+  bottom: 0;
+  width: 360px;      /* fixed width panel */
+  background: rgba(6,8,18,0.95);
+  color: #fff;
+  z-index: 3000;
+  display: none;
+  flex-direction: column;
+  padding: 24px;
+  box-shadow: -4px 0 12px rgba(0,0,0,0.6);
+}
+
+/* Show overlay when open */
+.lyrics-overlay.open {
+  display: flex;
+}
+
+
+.lyrics-overlay h2 {
+  font-size: 20px;
+  margin-bottom: 12px;
+  color: #22e1ff;
+}
+
+.lyrics-overlay-content {
+  flex: 1;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.lyrics-overlay .close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(34,225,255,0.15);
+  border: 1px solid rgba(34,225,255,0.4);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  color: #22e1ff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lyrics-overlay .close-btn:hover {
+  background: rgba(34,225,255,0.25);
+  box-shadow: 0 0 12px rgba(34,225,255,0.5);
+}
+
+
+.progress-container {
+  flex: 1;
+  height: 6px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%; /* starts empty */
+  background: linear-gradient(90deg, #22e1ff, #00ffff);
+  border-radius: 3px;
+  transition: width 0.2s linear;
+}
+
+
+/* ============================================================
+Subtitle controls
+============================================================ */
+/* Subtitle toggle button */
+.subtitle-btn {
+  background: transparent;
+  color: #22e1ff;
+  border: 1px solid #22e1ff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.25s ease;
+}
+.subtitle-btn:hover {
+  background: rgba(34,225,255,0.1);
+  box-shadow: 0 0 8px #22e1ff;
+}
+
+/* Font size slider (futuristic minimalist) */
+#subtitle-size {
+  -webkit-appearance: none;
+  width: 140px;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+#subtitle-size:hover {
+  background: rgba(34,225,255,0.25);
+}
+#subtitle-size::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #22e1ff;
+  border: none;
+  box-shadow: 0 0 6px #22e1ff;
+  transition: transform 0.2s ease;
+}
+#subtitle-size::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+#subtitle-size::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #22e1ff;
+  border: none;
+  box-shadow: 0 0 6px #22e1ff;
+  transition: transform 0.2s ease;
+}
+#subtitle-size::-moz-range-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Floating subtitle overlay */
+/* Floating subtitle overlay (WMP style mimic) */
+.subtitle-overlay {
+  position: fixed;              /* fixed to viewport, not just video frame */
+  bottom: 6%;                   /* float above bottom edge */
+  left: 0;
+  width: 100%;                  /* stretch full width */
+  text-align: center;           /* center text horizontally */
+  font-size: var(--subtitle-font-size, 22px);
+  font-weight: 400;
+  color: #fff;
+  line-height: 1.5;
+  font-family: "Segoe UI", "Roboto", sans-serif;
+  letter-spacing: 0.5px;
+  display: none;                /* hidden until enabled */
+  pointer-events: none;
+  z-index: 9999;
+  padding: 0;
+  margin: 0;
+
+  /* readability */
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000,
+     2px  2px 4px rgba(0,0,0,0.8);
+
+  /* clamp to 2 lines */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@supports not (-webkit-line-clamp: 2) {
+  .subtitle-overlay {
+    max-height: calc(2 * 1.5em); /* fallback: 2 lines max */
+    overflow: hidden;
+  }
+}
+
+
+/* Subtitle controls row in footer */
+.subtitle-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.subtitle-controls label {
+  font-size: 12px;
+  color: #dfe3ff;
+}
+.subtitle-controls input[type="range"] {
+  width: 120px;
+  accent-color: #22e1ff;
+}
+
+/* Floating subtitle overlay */
+
+
+video::-webkit-media-controls-fullscreen-button {
+  display: none !important;
+}
+
+#webtv-frame:fullscreen #webtv-frame-header,
+#webtv-frame.fullscreen #webtv-frame-header {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
